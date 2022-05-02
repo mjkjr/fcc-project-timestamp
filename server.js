@@ -20,24 +20,36 @@ app.get("/", function (req, res) {
 });
 
 
-// date string timestamp api endpoint
-app.get("/api/:year-:month-:day", function (req, res) {
+// timestamp api endpoint
+app.get("/api/:timestamp", function (req, res) {
 
-	// convert timestamp date string into a date object
-	const date = new Date( req.params.year + '-' + req.params.month + '-' + req.params.day );
+	let result = { };
+	let date;
+
+	if ( isNaN( req.params.timestamp ) ) {
+
+		// convert timestamp date string into a date object
+		date = new Date( req.params.timestamp );
+
+	}
+	else {	// assume it's a unix epoch number
+
+		// convert epoch number into a date object
+		date = new Date( Number( req.params.timestamp ) );
+	}
+
+	if ( date.toString() == 'Invalid Date' ) {
+
+		result.error = 'Invalid Date';
+	}
+	else {
+
+		result.unix = date.getTime();
+		result.utc = date.toUTCString();
+	}
 
 	// return a json object with the date info
-	res.json( { unix: date.getTime(), utc: date.toUTCString() } );
-});
-
-// unix epoch timestamp api endpoint
-app.get("/api/:epoch", function (req, res) {
-
-	// convert timestamp date string into a date object
-	const date = new Date( Number( req.params.epoch ) );
-
-	// return a json object with the date info
-	res.json( { unix: date.getTime(), utc: date.toUTCString() } );
+	res.json( result );
 });
 
 
@@ -45,9 +57,6 @@ app.get("/api/:epoch", function (req, res) {
 app.get("/api/", function (req, res) {
 
 	const date = new Date( Date.now() );
-
-	// return a json object with the date info
-	res.json( { unix: date.getTime(), utc: date.toUTCString() } );
 
 	// return a json object with the date info
 	res.json( { unix: date.getTime(), utc: date.toUTCString() } );
