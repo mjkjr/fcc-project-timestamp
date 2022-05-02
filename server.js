@@ -41,6 +41,19 @@ app.get("/api/:epoch", function (req, res) {
 });
 
 
+// empty api request returns current time
+app.get("/api/", function (req, res) {
+
+	const date = new Date( Date.now() );
+
+	// return a json object with the date info
+	res.json( { unix: date.getTime(), utc: date.toUTCString() } );
+
+	// return a json object with the date info
+	res.json( { unix: date.getTime(), utc: date.toUTCString() } );
+});
+
+
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
